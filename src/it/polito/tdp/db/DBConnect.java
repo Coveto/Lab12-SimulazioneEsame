@@ -3,28 +3,27 @@ package it.polito.tdp.db;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
 public class DBConnect {
 
-	private static final String jdbcURL = "jdbc:mysql://localhost/denver_crimes";
+	private static final String jdbcURL = "jdbc:mysql://localhost/denver_crimes?serverTimezone=UTC";
 	private static HikariDataSource ds;
 	
 	public static Connection getConnection() {
 		
 		if (ds == null) {
-			HikariConfig config = new HikariConfig();
-			config.setJdbcUrl(jdbcURL);
-			config.setUsername("root");
-			config.setPassword("root");
-			
+			ds = new HikariDataSource();
+
+			ds.setJdbcUrl(jdbcURL);
+			ds.setUsername("gabri");
+			ds.setPassword("gabri");
+
 			// configurazione MySQL
-			config.addDataSourceProperty("cachePrepStmts", "true");
-			config.addDataSourceProperty("prepStmtCacheSize", "250");
-			config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
+			ds.addDataSourceProperty("cachePrepStmts", "true");
+			ds.addDataSourceProperty("prepStmtCacheSize", "250");
+			ds.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
 			
-			ds = new HikariDataSource(config);
 		}
 		
 		try {

@@ -5,9 +5,12 @@
 package it.polito.tdp.crimes;
 
 import java.net.URL;
+import java.time.Month;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import it.polito.tdp.model.Model;
+import it.polito.tdp.model.Vicino;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -26,13 +29,13 @@ public class CrimesController {
     private URL location;
 
     @FXML // fx:id="boxAnno"
-    private ComboBox<?> boxAnno; // Value injected by FXMLLoader
+    private ComboBox<Integer> boxAnno; // Value injected by FXMLLoader
 
     @FXML // fx:id="boxMese"
-    private ComboBox<?> boxMese; // Value injected by FXMLLoader
+    private ComboBox<Month> boxMese; // Value injected by FXMLLoader
 
     @FXML // fx:id="boxGiorno"
-    private ComboBox<?> boxGiorno; // Value injected by FXMLLoader
+    private ComboBox<Integer> boxGiorno; // Value injected by FXMLLoader
 
     @FXML // fx:id="btnCreaReteCittadina"
     private Button btnCreaReteCittadina; // Value injected by FXMLLoader
@@ -48,12 +51,65 @@ public class CrimesController {
 
     @FXML
     void doCreaReteCittadina(ActionEvent event) {
+    	Integer year = boxAnno.getValue();
+    	if (year == null) {
+    		txtResult.appendText("Devi selezionare un anno");
+    		return;
+    	}
+    	this.model.creaGrafo(year);
     	
+    	for(Integer d : this.model.getDistretti()) {
+    		List<Vicino> vicini = this.model.getVicini(d);
+    		txtResult.appendText("\nVICINI DI DISTRETTO " + d);
+    		for(Vicino v : vicini) {
+    			txtResult.appendText("\n" + v.getV() + " d = " + v.getDistanza());
+    		}
+    	}
+    	
+    	boxMese.getItems().addAll(this.model.getMonths());
+    	boxGiorno.getItems().addAll(this.model.getDays());
+    	
+    	btnSimula.setDisable(false);
+
     }
 
     @FXML
     void doSimula(ActionEvent event) {
-
+    	Integer year = boxAnno.getValue();
+    	if (year == null) {
+    		txtResult.appendText("Devi selezionare un anno");
+    		return;
+    	}
+    	
+    	Month month = boxMese.getValue();
+    	if (month == null) {
+    		txtResult.appendText("Devi selezionare un mese");
+    		return;
+    	}
+    	
+    	Integer day = boxGiorno.getValue();
+    	if (day == null) {
+    		txtResult.clear();
+    		txtResult.appendText("Devi selezionare un giorno");
+    		return;
+    	}
+    	
+    	Integer N;
+		try {
+			N = Integer.parseInt(txtN.getText());
+			if (N < 1 || N > 10) {
+				txtResult.clear();
+	    		txtResult.appendText("Devi inserire un numero tra 1 e 10");
+	    		return;
+	    	}
+		} catch (NumberFormatException e) {
+			txtResult.clear();
+			txtResult.appendText("Devi inserire un numero tra 1 e 10");
+			return;
+		}
+    	
+    	int malGestiti = this.model.simulate(day, month, year, N);
+    	txtResult.appendText("Eventi mal gestiti: "+malGestiti);
     }
 
     @FXML // This method is called by the FXMLLoader when initialization is complete
@@ -70,5 +126,7 @@ public class CrimesController {
     
     public void setModel(Model model) {
     	this.model = model;
+    	boxAnno.getItems().addAll(this.model.getYears());
+    	btnSimula.setDisable(true);
     }
 }

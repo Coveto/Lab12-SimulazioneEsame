@@ -2,6 +2,8 @@ package it.polito.tdp.model;
 
 import java.time.LocalDateTime;
 
+import com.javadocmd.simplelatlng.LatLng;
+
 public class Event {
 	
 	private Long incident_id;
@@ -11,8 +13,7 @@ public class Event {
 	private String offense_category_id;
 	private LocalDateTime reported_date;
 	private String incident_address;
-	private double geo_lon;
-	private double geo_lat;
+	private LatLng geo;
 	private Integer district_id;
 	private Integer precinct_id;
 	private String neighborhood_id;
@@ -31,8 +32,7 @@ public class Event {
 		this.offense_category_id = offense_category_id;
 		this.reported_date = reported_date;
 		this.incident_address = incident_address;
-		this.geo_lon = geo_lon;
-		this.geo_lat = geo_lat;
+		this.geo = new LatLng(geo_lat, geo_lon);
 		this.district_id = district_id;
 		this.precinct_id = precinct_id;
 		this.neighborhood_id = neighborhood_id;
@@ -82,18 +82,13 @@ public class Event {
 	public void setIncident_address(String incident_address) {
 		this.incident_address = incident_address;
 	}
-	public double getGeo_lon() {
-		return geo_lon;
+	public LatLng getGeo() {
+		return geo;
 	}
-	public void setGeo_lon(double geo_lon) {
-		this.geo_lon = geo_lon;
+	public void setGeo(LatLng geo) {
+		this.geo = geo;
 	}
-	public double getGeo_lat() {
-		return geo_lat;
-	}
-	public void setGeo_lat(double geo_lat) {
-		this.geo_lat = geo_lat;
-	}
+
 	public Integer getDistrict_id() {
 		return district_id;
 	}
@@ -125,11 +120,19 @@ public class Event {
 		this.is_traffic = is_traffic;
 	}
 
+	
+
+	@Override
+	public String toString() {
+		return "Event [incident_id=" + incident_id + ", offense_category_id=" + offense_category_id + ", reported_date="
+				+ reported_date + ", district_id=" + district_id + "]";
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((district_id == null) ? 0 : district_id.hashCode());
+		result = prime * result + ((incident_id == null) ? 0 : incident_id.hashCode());
 		return result;
 	}
 
@@ -142,18 +145,12 @@ public class Event {
 		if (getClass() != obj.getClass())
 			return false;
 		Event other = (Event) obj;
-		if (district_id == null) {
-			if (other.district_id != null)
+		if (incident_id == null) {
+			if (other.incident_id != null)
 				return false;
-		} else if (!district_id.equals(other.district_id))
+		} else if (!incident_id.equals(other.incident_id))
 			return false;
 		return true;
-	}
-
-	@Override
-	public String toString() {
-		return "Event [incident_id=" + incident_id + ", offense_category_id=" + offense_category_id + ", reported_date="
-				+ reported_date + ", district_id=" + district_id + "]";
 	}
 	
 	
